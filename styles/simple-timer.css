@@ -1,0 +1,131 @@
+#simple-timer {
+  position: absolute;
+  top: -75px;
+  right: -280px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 240px;
+  height: 130px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  box-sizing: border-box;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.timer-display {
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  width: 120px;
+  height: 32px;
+  text-align: center;
+  pointer-events: auto;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.timer-display:hover {
+  border-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.timer-input {
+  font-size: 1.4rem !important;
+  font-weight: bold !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #000 !important;
+  border: 1px solid #ccc !important;
+  border-radius: 3px !important;
+  padding: 4px 8px !important;
+  text-align: center !important;
+  width: 120px !important;
+  height: 32px !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  vertical-align: top !important;
+}
+
+.timer-mode {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-size: 0.8rem;
+  width: 100%;
+  pointer-events: auto;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.timer-mode:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.timer-btn {
+  flex: 1;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  pointer-events: auto;
+  margin: 0;
+}
+
+.start-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.start-btn:hover {
+  background-color: #218838;
+}
+
+.stop-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.stop-btn:hover {
+  background-color: #c82333;
+}
+
+#hotbar {
+  position: relative;
+}
+
+.clean-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.clean-btn:hover {
+  background-color: #5a6268;
+}

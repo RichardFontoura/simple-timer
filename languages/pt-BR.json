@@ -1,0 +1,16 @@
+{
+  "simple-timer": {
+    "countdown": "Decrescente",
+    "countup": "Crescente",
+    "start": "Iniciar",
+    "stop": "Parar",
+    "clean": "Limpar",
+    "timerFinished": "Timer finalizado!",
+    "settings": {
+      "allowPlayersTitle": "Configurações do Timer",
+      "allowPlayersHint": "Configure as opções de visibilidade do timer",
+      "allowPlayersName": "Permitir que Jogadores Usem o Timer",
+      "allowPlayersHint2": "Quando ativado, todos os jogadores podem ver e usar o timer. Quando desativado, apenas o GM pode usá-lo."
+    }
+  }
+}
