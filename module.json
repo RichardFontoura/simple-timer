@@ -2,7 +2,7 @@
   "id": "simple-timer",
   "title": "Simple Timer",
   "description": "A basic timer tool for tracking time intervals or countdowns.",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "authors": [
     {
       "name": "lobowarewolf",
@@ -11,7 +11,7 @@
   ],
   "compatibility": {
     "minimum": "12",
-    "verified": "12"
+    "verified": "13"
   },
   "esmodules": ["main.js"],
   "styles": ["styles/simple-timer.css"],
@@ -28,6 +28,6 @@
     }
   ],
   "url": "https://github.com/RichardFontoura/simple-timer",
-  "manifest": "https://github.com/RichardFontoura/simple-timer/releases/download/1.0.0/module.json",
-  "download": "https://github.com/RichardFontoura/simple-timer/releases/download/1.0.0/simple-timer.zip"
+  "manifest": "https://github.com/RichardFontoura/simple-timer/releases/download/2.0.0/module.json",
+  "download": "https://github.com/RichardFontoura/simple-timer/releases/download/2.0.0/simple-timer.zip"
 }

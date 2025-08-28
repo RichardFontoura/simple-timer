@@ -1,36 +1,17 @@
-import { TimerApp } from "./timer-app.mjs";
+import { TimerApp } from "./src/app/timer-app.mjs";
+import { MODULE_ID, registerSettings, isV13 } from "./src/config/config.mjs";
 
 Hooks.once("init", () => {
   console.log("Simple Timer | Initializing module settings");
-
-  game.settings.register("simple-timer", "allowPlayers", {
-    name: game.i18n.localize("simple-timer.settings.allowPlayersName"),
-    hint: game.i18n.localize("simple-timer.settings.allowPlayersHint2"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-    onChange: (value) => {
-      console.log("Simple Timer | Allow players setting changed to:", value);
-      ui.hotbar.render();
-    },
-  });
+  registerSettings();
 });
 
 Hooks.on("ready", (app, html) => {
+  const canUseTimer =
+    game.user.isGM || game.settings.get(MODULE_ID, "allowPlayers");
 
-
-
-  const allowPlayers = game.settings.get("simple-timer", "allowPlayers");
-  const canUseTimer = game.user.isGM || allowPlayers;
-
-  if (!canUseTimer) {
-    console.log("Simple Timer | User does not have permission to use timer");
-    return;
-  }else{
-    const timeApp = new TimerApp;
-    timeApp.render(true)
+  if (canUseTimer) {
+    const timeApp = new TimerApp();
+    timeApp.render(true);
   }
-
-  
 });

@@ -1,11 +1,13 @@
+import { isV13 } from "../config/config.mjs";
+
 export class TimerApp extends foundry.applications.api.ApplicationV2 {
   static instances = new Map();
   static DEFAULT_OPTIONS = {
     form: { preventEscapeClose: true },
-    position:{
-        height: "auto",
-        width: "auto",
-        left: 0
+    position: {
+      height: "auto",
+      width: "auto",
+      left: 0,
     },
   };
 
@@ -18,7 +20,8 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
       mode: "countdown",
       interval: null,
     };
-    TimerApp.instances.set(this.id, this);
+    const key = this.id ?? this.appId ?? foundry.utils.randomID();
+    TimerApp.instances.set(key, this);
   }
 
   static get defaultOptions() {
@@ -26,17 +29,41 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
       id: "simple-timer-app-" + foundry.utils.randomID(),
       classes: ["simple-timer-app"],
       popOut: true,
-      template: null, 
+      template: null,
     });
   }
 
   async render(force = false, options = {}) {
     await super.render(force, options);
-    const el = this.element;
-    const closeButton = el.querySelector(".header-control.icon.fa-solid.fa-xmark");
-    closeButton.remove()
+
+    let el = this.element;
+    if (!(el instanceof HTMLElement)) {
+      el = Array.isArray(el) ? el[0] : el?.[0] || el?.element || null;
+    }
+    if (!el) {
+      console.warn("Simple Timer | Could not resolve application element");
+      return;
+    }
+
+    const closeSelectorV13 = ".header-control.icon.fa-solid.fa-xmark";
+    const closeSelectorV12 =
+      ".window-header a.header-button.close, .window-header .window-control.close, .window-header .fa-times, .header-button.close, [data-action='close']";
+    const closeButton = el.querySelector(
+      isV13() ? closeSelectorV13 : closeSelectorV12
+    );
+    if (closeButton && typeof closeButton.remove === "function") {
+      closeButton.remove();
+    }
+
     const inner = el.querySelector(".window-content");
-    inner.style.padding = 0;
+    if (inner) {
+      inner.style.padding = 0;
+      if (!isV13()) {
+        const htmlContent = await this._renderHTML();
+        await this._replaceHTML(htmlContent, inner);
+      }
+    }
+
     el.classList.add("simple-timer-dom");
     this.dodajAktywneListiery(el);
   }
@@ -52,13 +79,23 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
       <div id="simple-timer">
         <div class="timer-display" id="timer-display">00:00:00</div>
         <select class="timer-mode" id="timer-mode">
-          <option value="countdown">${game.i18n.localize("simple-timer.countdown")}</option>
-          <option value="countup">${game.i18n.localize("simple-timer.countup")}</option>
+          <option value="countdown">${game.i18n.localize(
+            "simple-timer.countdown"
+          )}</option>
+          <option value="countup">${game.i18n.localize(
+            "simple-timer.countup"
+          )}</option>
         </select>
         <div class="timer-controls">
-          <button class="timer-btn start-btn" id="start-btn">${game.i18n.localize("simple-timer.start")}</button>
-          <button class="timer-btn stop-btn" id="stop-btn">${game.i18n.localize("simple-timer.stop")}</button>
-          <button class="timer-btn clean-btn" id="clean-btn">${game.i18n.localize("simple-timer.clean")}</button>
+          <button class="timer-btn start-btn" id="start-btn">${game.i18n.localize(
+            "simple-timer.start"
+          )}</button>
+          <button class="timer-btn stop-btn" id="stop-btn">${game.i18n.localize(
+            "simple-timer.stop"
+          )}</button>
+          <button class="timer-btn clean-btn" id="clean-btn">${game.i18n.localize(
+            "simple-timer.clean"
+          )}</button>
         </div>
       </div>
     `;
@@ -81,10 +118,14 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
       const mins = Math.floor((Math.abs(totalSeconds) % 3600) / 60);
       const secs = Math.abs(totalSeconds) % 60;
       const sign = totalSeconds < 0 ? "-" : "";
-      return `${sign}${hours.toString().padStart(2,"0")}:${mins.toString().padStart(2,"0")}:${secs.toString().padStart(2,"0")}`;
+      return `${sign}${hours.toString().padStart(2, "0")}:${mins
+        .toString()
+        .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     };
 
-    const updateDisplay = () => { timerDisplay.textContent = formatTime(this.timerState.seconds); };
+    const updateDisplay = () => {
+      timerDisplay.textContent = formatTime(this.timerState.seconds);
+    };
 
     timerDisplay.addEventListener("dblclick", () => {
       if (this.timerState.isRunning) return;
@@ -95,10 +136,11 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
       timerDisplay.replaceWith(input);
       input.focus();
       const saveTime = () => {
-        const parts = input.value.split(":").map(x => parseInt(x)||0);
+        const parts = input.value.split(":").map((x) => parseInt(x) || 0);
         let seconds = 0;
-        if(parts.length === 3) seconds = parts[0]*3600 + parts[1]*60 + parts[2];
-        else if(parts.length === 2) seconds = parts[0]*60 + parts[1];
+        if (parts.length === 3)
+          seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+        else if (parts.length === 2) seconds = parts[0] * 60 + parts[1];
         else seconds = parts[0];
         this.timerState.targetSeconds = seconds;
         this.timerState.seconds = seconds;
@@ -106,46 +148,47 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
         updateDisplay();
       };
       input.addEventListener("blur", saveTime);
-      input.addEventListener("keypress", (e)=>{ if(e.key==="Enter") saveTime(); });
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") saveTime();
+      });
     });
 
     timerMode.addEventListener("change", () => {
-      if(this.timerState.isRunning) timerMode.value = this.timerState.mode;
+      if (this.timerState.isRunning) timerMode.value = this.timerState.mode;
       else this.timerState.mode = timerMode.value;
     });
 
-
     startBtn.addEventListener("click", () => {
-      if(this.timerState.isRunning) return;
+      if (this.timerState.isRunning) return;
       this.timerState.isRunning = true;
       timerMode.disabled = true;
-      this.timerState.interval = setInterval(()=>{
-        if(this.timerState.mode==="countdown") {
+      this.timerState.interval = setInterval(() => {
+        if (this.timerState.mode === "countdown") {
           this.timerState.seconds--;
-          if(this.timerState.seconds<=0){
+          if (this.timerState.seconds <= 0) {
             this.timerState.seconds = 0;
             stopBtn.click();
-            ui.notifications.info(game.i18n.localize("simple-timer.timerFinished"));
+            ui.notifications.info(
+              game.i18n.localize("simple-timer.timerFinished")
+            );
           }
         } else this.timerState.seconds++;
         updateDisplay();
-      },1000);
+      }, 1000);
     });
 
-
-    stopBtn.addEventListener("click", ()=>{
-      if(!this.timerState.isRunning) return;
+    stopBtn.addEventListener("click", () => {
+      if (!this.timerState.isRunning) return;
       this.timerState.isRunning = false;
       clearInterval(this.timerState.interval);
       timerMode.disabled = false;
     });
 
-
-    cleanBtn.addEventListener("click", ()=>{
-      if(this.timerState.isRunning) return;
+    cleanBtn.addEventListener("click", () => {
+      if (this.timerState.isRunning) return;
       this.timerState.seconds = 0;
       this.timerState.targetSeconds = 0;
-        updateDisplay();
-    })
-}
+      updateDisplay();
+    });
+  }
 }
