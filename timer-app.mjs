@@ -69,10 +69,6 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
     html.innerHTML = result;
   }
 
-  getData() {
-    return { timerState: this.timerState };
-  }
-
   dodajAktywneListiery(html) {
     const timerDisplay = html.querySelector("#timer-display");
     const timerMode = html.querySelector("#timer-mode");
@@ -90,7 +86,6 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
 
     const updateDisplay = () => { timerDisplay.textContent = formatTime(this.timerState.seconds); };
 
-    // Podwójne kliknięcie, edycja czasu
     timerDisplay.addEventListener("dblclick", () => {
       if (this.timerState.isRunning) return;
       const input = document.createElement("input");
@@ -114,13 +109,12 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
       input.addEventListener("keypress", (e)=>{ if(e.key==="Enter") saveTime(); });
     });
 
-    // Zmiana trybu
     timerMode.addEventListener("change", () => {
       if(this.timerState.isRunning) timerMode.value = this.timerState.mode;
       else this.timerState.mode = timerMode.value;
     });
 
-    // Start
+
     startBtn.addEventListener("click", () => {
       if(this.timerState.isRunning) return;
       this.timerState.isRunning = true;
@@ -138,7 +132,7 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
       },1000);
     });
 
-    // Stop
+
     stopBtn.addEventListener("click", ()=>{
       if(!this.timerState.isRunning) return;
       this.timerState.isRunning = false;
@@ -146,7 +140,7 @@ export class TimerApp extends foundry.applications.api.ApplicationV2 {
       timerMode.disabled = false;
     });
 
-    // Reset
+
     cleanBtn.addEventListener("click", ()=>{
       if(this.timerState.isRunning) return;
       this.timerState.seconds = 0;
